@@ -1,6 +1,10 @@
-# Ansible Role: Redis
+# sbog/redis
 
-[![CI](https://github.com/geerlingguy/ansible-role-redis/workflows/CI/badge.svg?event=push)](https://github.com/geerlingguy/ansible-role-redis/actions?query=workflow%3ACI)
+[![Build Status](https://travis-ci.com/sorrowless/ansible_redis.svg?branch=master)](https://travis-ci.com/sorrowless/ansible_redis)
+[![Ansible Role](https://img.shields.io/ansible/role/32852)](https://galaxy.ansible.com/sorrowless/redis)
+[![Ansible Quality Score](https://img.shields.io/ansible/quality/32852)](https://galaxy.ansible.com/sorrowless/redis)
+[![Ansible Role](https://img.shields.io/ansible/role/d/32852)](https://galaxy.ansible.com/sorrowless/redis)
+[![GitHub](https://img.shields.io/github/license/sorrowless/ansible_redis)](https://github.com/sorrowless/ansible_redis/blob/master/LICENSE)
 
 Installs [Redis](http://redis.io/) on Linux.
 
@@ -116,4 +120,6 @@ MIT / BSD
 
 ## Author Information
 
-This role was created in 2014 by [Jeff Geerling](https://www.jeffgeerling.com/), author of [Ansible for DevOps](https://www.ansiblefordevops.com/).
+This role was initially created in 2014 by [Jeff Geerling](https://www.jeffgeerling.com/), author of [Ansible for DevOps](https://www.ansiblefordevops.com/).
+
+Improved by [Stan Bogatkin](https://sbog.ru) to achieve additional options like master/slave replication, sentinel installation, cluster setup, additional inline configuration etc.

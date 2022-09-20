@@ -53,3 +53,29 @@ requirepass {{ redis_requirepass }}
 {% for redis_disabled_command in redis_disabled_commands %}
 rename-command {{ redis_disabled_command }} ""
 {% endfor %}
+
+# Replication
+{% if redis_slaveof -%}
+slaveof {{ redis_slaveof }}
+{% endif -%}
+slave-serve-stale-data yes
+slave-read-only {{ redis_slave_read_only }}
+repl-disable-tcp-nodelay no
+{% if redis_repl_backlog_size -%}
+repl-backlog-size {{ redis_repl_backlog_size }}
+{% endif -%}
+slave-priority {{ redis_slave_priority }}
+{% if redis_min_slaves_to_write -%}
+min-slaves-to-write {{ redis_min_slaves_to_write }}
+{% endif -%}
+{% if redis_min_slaves_max_lag -%}
+min-slaves-max-lag {{ redis_min_slaves_max_lag }}
+{% endif -%}
+{% if redis_requirepass -%}
+masterauth {{ redis_requirepass }}
+{% endif -%}
+
+{% if redis_config_additional|length -%}
+# Additional
+{{ redis_config_additional -}}
+{% endif -%}

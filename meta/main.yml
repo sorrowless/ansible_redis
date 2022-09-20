@@ -3,10 +3,12 @@ dependencies: []
 
 galaxy_info:
   role_name: redis
-  author: geerlingguy
+  author: Stan Bogatkin
   description: Redis for Linux
-  company: "Midwestern Mac, LLC"
+  description: Ansible role to install and configure redis server
   license: "license (BSD, MIT)"
+  company: Personal project
+  namespace: sorrowless
   min_ansible_version: 2.4
   platforms:
     - name: EL
