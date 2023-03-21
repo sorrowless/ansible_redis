@@ -2,17 +2,25 @@
 # Variable setup.
 - name: Include OS-specific variables.
   include_vars: "{{ ansible_os_family }}.yml"
+  tags:
+    - always
 
 - name: Define redis_package.
   set_fact:
     redis_package: "{{ __redis_package }}"
   when: redis_package is not defined
+  tags:
+    - always
 
 - name: Ensure Redis configuration dir exists.
   file:
     path: "{{ redis_conf_path | dirname }}"
     state: directory
     mode: 0755
+  tags:
+    - always
+
+# Setup/install redis.
 
 - name: Ensure Redis is configured.
   template:
@@ -20,19 +28,30 @@
     dest: "{{ redis_conf_path }}"
     mode: "{{ redis_conf_mode }}"
   notify: restart redis
+  tags:
+    - redis
 
-# Setup/install tasks.
 - include_tasks: setup-RedHat.yml
   when: ansible_os_family == 'RedHat'
+  tags:
+    - redis
 
 - include_tasks: setup-Debian.yml
   when: ansible_os_family == 'Debian'
+  tags:
+    - redis
 
 - include_tasks: setup-Archlinux.yml
   when: ansible_os_family == 'Archlinux'
+  tags:
+    - redis
 
 - name: Ensure Redis is running and enabled on boot.
   service: "name={{ redis_daemon }} state=started enabled=yes"
+  tags:
+    - redis
+
+# Setup/install sentinel.
 
 - name: Ensure Redis Sentinel is configured.
   template:
@@ -42,8 +61,9 @@
     owner: "{{ redis_owner }}"
     group: "{{ redis_group }}"
   notify: restart sentinel
-  when:
-    - redis_sentinel
+  tags:
+    - sentinel
+    - never
 
 - name: Ensure Redis Sentinel service file.
   template:
@@ -51,8 +71,9 @@
     dest: /etc/systemd/system/sentinel.service
     mode: "{{ redis_conf_mode }}"
   notify: restart sentinel
-  when:
-    - redis_sentinel
+  tags:
+    - sentinel
+    - never
 
 - name: Ensure Redis Sentinel working directory
   file:
@@ -62,8 +83,9 @@
     owner: "{{ redis_owner }}"
     group: "{{ redis_group }}"
   notify: restart sentinel
-  when:
-    - redis_sentinel
+  tags:
+    - sentinel
+    - never
 
 - name: Ensure Redis Sentinel service file.
   template:
@@ -71,15 +93,18 @@
     dest: /etc/systemd/system/sentinel.service
     mode: "{{ redis_conf_mode }}"
   notify: restart sentinel
-  when:
-    - redis_sentinel
+  tags:
+    - sentinel
+    - never
 
 - name: Ensure Redis Sentinel is running and enabled on boot.
   service: "name=sentinel state=started enabled=yes"
-  when:
-    - redis_sentinel
+  tags:
+    - sentinel
+    - never
 
 - name: Ensure Redis Sentinel is running and enabled on boot.
   service: "name=sentinel state=started enabled=yes"
-  when:
-    - redis_sentinel
+  tags:
+    - sentinel
+    - never
