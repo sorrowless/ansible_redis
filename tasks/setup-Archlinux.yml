@@ -3,3 +3,5 @@
   pacman:
     name: "{{ redis_package }}"
     state: present
+  tags:
+    - always

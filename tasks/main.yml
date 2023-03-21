@@ -20,6 +20,21 @@
   tags:
     - always
 
+- include_tasks: setup-RedHat.yml
+  when: ansible_os_family == 'RedHat'
+  tags:
+    - always
+
+- include_tasks: setup-Debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - always
+
+- include_tasks: setup-Archlinux.yml
+  when: ansible_os_family == 'Archlinux'
+  tags:
+    - always
+
 # Setup/install redis.
 
 - name: Ensure Redis is configured.
@@ -28,21 +43,6 @@
     dest: "{{ redis_conf_path }}"
     mode: "{{ redis_conf_mode }}"
   notify: restart redis
-  tags:
-    - redis
-
-- include_tasks: setup-RedHat.yml
-  when: ansible_os_family == 'RedHat'
-  tags:
-    - redis
-
-- include_tasks: setup-Debian.yml
-  when: ansible_os_family == 'Debian'
-  tags:
-    - redis
-
-- include_tasks: setup-Archlinux.yml
-  when: ansible_os_family == 'Archlinux'
   tags:
     - redis
 
