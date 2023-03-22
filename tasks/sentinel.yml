@@ -1,0 +1,36 @@
+---
+# Setup sentinel systemd unit
+- name: Ensure Redis Sentinel is configured.
+  template:
+    src: sentinel.conf.j2
+    dest: "{{ redis_conf_path | dirname }}/sentinel.conf"
+    mode: "{{ redis_conf_mode }}"
+    owner: "{{ redis_owner }}"
+    group: "{{ redis_group }}"
+  notify: restart sentinel
+
+- name: Ensure Redis Sentinel service file.
+  template:
+    src: sentinel.service.j2
+    dest: /etc/systemd/system/sentinel.service
+    mode: "{{ redis_conf_mode }}"
+  notify: restart sentinel
+
+- name: Ensure Redis Sentinel working directory
+  file:
+    path: "{{ redis_sentinel_dir }}"
+    state: directory
+    mode: "0755"
+    owner: "{{ redis_owner }}"
+    group: "{{ redis_group }}"
+  notify: restart sentinel
+
+- name: Ensure Redis Sentinel service file.
+  template:
+    src: sentinel.service.j2
+    dest: /etc/systemd/system/sentinel.service
+    mode: "{{ redis_conf_mode }}"
+  notify: restart sentinel
+
+- name: Ensure Redis Sentinel is running and enabled on boot.
+  service: "name=sentinel state=started enabled=yes"

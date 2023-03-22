@@ -1,0 +1,32 @@
+---
+- name: Ensure Redis Sentinel is configured.
+  template:
+    src: sentinel.conf.j2
+    dest: "{{ redis_conf_path | dirname }}/sentinel.conf" 
+    mode: "{{ redis_conf_mode }}"
+    owner: root
+    group: root
+  notify: restart sentinel container
+
+- name: Start sentinel container 
+  community.docker.docker_compose:
+    state: present
+    project_name: "{{ redis_sentinel_docker_project_name }}"
+    definition:
+      version: '2'
+      services:
+        redis:
+          image: "{{ redis_sentinel_docker_image }}"
+          user: root
+          container_name: "{{ redis_sentinel_container_name }}"
+          ports:
+            - "{{ redis_sentinel_bind }}:{{ redis_sentinel_port }}:26379"
+          restart: always
+          volumes:
+            - "{{ redis_conf_path | dirname }}:/bitnami/redis-sentinel/conf"
+          environment:
+            - ALLOW_EMPTY_PASSWORD=yes
+      networks:
+        default:
+          external:
+            name: "{{ redis_sentinel_docker_network_name }}"

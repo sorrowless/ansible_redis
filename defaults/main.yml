@@ -1,4 +1,16 @@
 ---
+# Global variables for separatly deployment redis and sentinel
+redis_standalone: true
+redis_docker: false
+redis_sentinel_standalone: false
+redis_sentinel_docker: false
+
+# Redis docker related vars
+redis_docker_project_name: redis
+redis_docker_image: redis
+redis_container_name: redis
+redis_docker_network_name: default
+
 # Used for RHEL/CentOS/Fedora only. Allows the use of different repos.
 redis_enablerepo: epel
 
@@ -67,8 +79,13 @@ redis_min_slaves_max_lag: 10
 ## Additional config
 redis_config_additional: ""
 
+## Docker related vars for sentinel
+redis_sentinel_docker_project_name: sentinel
+redis_sentinel_docker_image: bitnami/redis-sentinel
+redis_sentinel_container_name: sentinel
+redis_sentinel_docker_network_name: default
+
 ## Sentinel options
-redis_sentinel: false
 redis_sentinel_protected_mode: "yes"
 redis_sentinel_dir: "/var/lib/redis/sentinel_{{ redis_sentinel_port }}"
 redis_sentinel_bind: 0.0.0.0

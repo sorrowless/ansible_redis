@@ -3,10 +3,12 @@
 daemonize yes
 
 protected-mode {{ redis_sentinel_protected_mode }}
+{% if redis_sentinel_standalone %}
 dir {{ redis_sentinel_dir }}
 pidfile {{ redis_sentinel_pidfile }}
 port {{ redis_sentinel_port }}
 bind {{ redis_sentinel_bind }}
+{% endif %}
 
 # Security
 {% if redis_sentinel_password %}

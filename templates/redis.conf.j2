@@ -1,9 +1,11 @@
 # {{ ansible_managed }}
 
+{% if redis_standalone %}
 daemonize yes
 pidfile /var/run/redis/{{ redis_daemon }}.pid
 port {{ redis_port }}
 bind {{ redis_bind_interface }}
+{% endif %}
 
 {% if redis_unixsocket %}
 unixsocket {{ redis_unixsocket }}
@@ -11,8 +13,10 @@ unixsocket {{ redis_unixsocket }}
 
 timeout {{ redis_timeout }}
 
+{% if redis_standalone %}
 loglevel {{ redis_loglevel }}
 logfile {{ redis_logfile }}
+{% endif %}
 
 # To enable logging to the system logger, just set 'syslog-enabled' to yes,
 # and optionally update the other syslog parameters to suit your needs.
@@ -26,9 +30,11 @@ databases {{ redis_databases }}
 save {{ save }}
 {% endfor %}
 
+{% if redis_standalone %}
 rdbcompression {{ redis_rdbcompression }}
 dbfilename {{ redis_dbfilename }}
 dir {{ redis_dbdir }}
+{% endif %}
 
 # maxclients 128
 
