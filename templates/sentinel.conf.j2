@@ -10,6 +10,11 @@ port {{ redis_sentinel_port }}
 bind {{ redis_sentinel_bind }}
 {% endif %}
 
+{% if redis_sentinel_docker %}
+sentinel announce-ip {{ redis_sentinel_announce_ip }}
+sentinel announce-port {{ redis_sentinel_announce_port }}
+{% endif %}
+
 # Security
 {% if redis_sentinel_password %}
 requirepass {{ redis_sentinel_password }}

@@ -84,6 +84,8 @@ redis_sentinel_docker_project_name: sentinel
 redis_sentinel_docker_image: bitnami/redis-sentinel
 redis_sentinel_container_name: sentinel
 redis_sentinel_docker_network_name: default
+redis_sentinel_announce_ip: 127.0.0.1
+redis_sentinel_announce_port: 26379
 
 ## Sentinel options
 redis_sentinel_protected_mode: "yes"
