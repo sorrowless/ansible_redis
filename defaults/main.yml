@@ -75,6 +75,8 @@ redis_slave_priority: 100
 redis_repl_backlog_size: false
 redis_min_slaves_to_write: 0
 redis_min_slaves_max_lag: 10
+redis_replica_announce_ip: "{{ redis_bind_interface }}"
+redis_replica_announce_port: 6379
 
 ## Additional config
 redis_config_additional: ""
@@ -90,7 +92,7 @@ redis_sentinel_announce_port: 26379
 ## Sentinel options
 redis_sentinel_protected_mode: "yes"
 redis_sentinel_dir: "/var/lib/redis/sentinel_{{ redis_sentinel_port }}"
-redis_sentinel_bind: 0.0.0.0
+redis_sentinel_bind: 127.0.0.1
 redis_sentinel_port: 26379
 redis_sentinel_password: false
 redis_sentinel_pidfile: /var/run/redis/sentinel_{{ redis_sentinel_port }}.pid

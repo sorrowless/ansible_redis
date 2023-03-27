@@ -80,6 +80,10 @@ min-slaves-max-lag {{ redis_min_slaves_max_lag }}
 {% if redis_requirepass -%}
 masterauth {{ redis_requirepass }}
 {% endif -%}
+{% if redis_docker -%}
+replica-announce-ip {{ redis_replica_announce_ip }}
+replica-announce-port {{ redis_replica_announce_port }}
+{% endif -%}
 
 {% if redis_config_additional|length -%}
 # Additional
