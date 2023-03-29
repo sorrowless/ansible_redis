@@ -1,4 +1,10 @@
 ---
+- name: Ensure Redis data dir exists.
+  file:
+    path: "{{ redis_docker_data_path }}"
+    state: directory
+    mode: 0777
+
 - name: Ensure Redis is configured.
   template:
     src: redis.conf.j2
@@ -16,12 +22,14 @@
         redis:
           image: "{{ redis_docker_image }}"
           container_name: "{{ redis_container_name }}"
+          user: root:root
           command: redis-server /etc/redis/redis.conf
           ports:
             - "{{ redis_bind_interface }}:{{ redis_port }}:6379"
           restart: always
           volumes:
             - "{{ redis_conf_path }}:/etc/redis/"
+            - "{{ redis_docker_data_path }}:{{ redis_dbdir }}"
       networks:
         default:
           external:

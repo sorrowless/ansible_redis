@@ -10,6 +10,7 @@ redis_docker_project_name: redis
 redis_docker_image: redis
 redis_container_name: redis
 redis_docker_network_name: default
+redis_docker_data_path: /var/lib/redis
 
 # Used for RHEL/CentOS/Fedora only. Allows the use of different repos.
 redis_enablerepo: epel

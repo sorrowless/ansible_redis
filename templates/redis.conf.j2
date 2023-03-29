@@ -30,11 +30,9 @@ databases {{ redis_databases }}
 save {{ save }}
 {% endfor %}
 
-{% if redis_standalone %}
 rdbcompression {{ redis_rdbcompression }}
 dbfilename {{ redis_dbfilename }}
 dir {{ redis_dbdir }}
-{% endif %}
 
 # maxclients 128
 
