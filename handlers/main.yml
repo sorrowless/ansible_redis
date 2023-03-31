@@ -4,3 +4,15 @@
 
 - name: restart sentinel
   service: "name=sentinel state=restarted"
+
+- name: restart redis container
+  docker_container:
+    name: "{{ redis_container_name }}"
+    state: started
+    restart: yes
+
+- name: restart sentinel container
+  docker_container:
+    name: "{{ redis_sentinel_container_name }}"
+    state: started
+    restart: yes
