@@ -13,11 +13,10 @@
   notify: restart redis container
 
 - name: Start redis container 
-  community.docker.docker_compose:
+  community.docker.docker_compose_v2:
     state: present
     project_name: "{{ redis_docker_project_name }}"
     definition:
-      version: '2'
       services:
         redis:
           image: "{{ redis_docker_image }}"
@@ -32,5 +31,5 @@
             - "{{ redis_docker_data_path }}:{{ redis_dbdir }}"
       networks:
         default:
-          external:
-            name: "{{ redis_docker_network_name }}"
+          external: true
+          name: "{{ redis_docker_network_name }}"
