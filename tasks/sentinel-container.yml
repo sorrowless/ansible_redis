@@ -9,11 +9,10 @@
   notify: restart sentinel container
 
 - name: Start sentinel container 
-  community.docker.docker_compose:
+  community.docker.docker_compose_v2:
     state: present
     project_name: "{{ redis_sentinel_docker_project_name }}"
     definition:
-      version: '2'
       services:
         redis:
           image: "{{ redis_sentinel_docker_image }}"
@@ -28,5 +27,5 @@
             - ALLOW_EMPTY_PASSWORD=yes
       networks:
         default:
-          external:
-            name: "{{ redis_sentinel_docker_network_name }}"
+          external: true
+          name: "{{ redis_sentinel_docker_network_name }}"
