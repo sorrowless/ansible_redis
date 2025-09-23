@@ -1,9 +1,8 @@
 # {{ ansible_managed }}
 
-daemonize yes
-
-protected-mode {{ redis_sentinel_protected_mode }}
 {% if redis_sentinel_standalone %}
+daemonize yes
+protected-mode {{ redis_sentinel_protected_mode }}
 dir {{ redis_sentinel_dir }}
 pidfile {{ redis_sentinel_pidfile }}
 port {{ redis_sentinel_port }}

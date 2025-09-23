@@ -9,7 +9,7 @@ redis_sentinel_docker: false
 redis_docker_project_name: redis
 redis_docker_image: redis
 redis_container_name: redis
-redis_docker_network_name: default
+redis_docker_network_name: redis
 redis_docker_data_path: /var/lib/redis
 
 # Used for RHEL/CentOS/Fedora only. Allows the use of different repos.
@@ -77,18 +77,18 @@ redis_repl_backlog_size: false
 redis_min_slaves_to_write: 0
 redis_min_slaves_max_lag: 10
 redis_replica_announce_ip: "{{ redis_bind_interface }}"
-redis_replica_announce_port: 6379
+redis_replica_announce_port: "{{ redis_port }}"
 
 ## Additional config
 redis_config_additional: ""
 
 ## Docker related vars for sentinel
 redis_sentinel_docker_project_name: sentinel
-redis_sentinel_docker_image: bitnami/redis-sentinel
+redis_sentinel_docker_image: redis
 redis_sentinel_container_name: sentinel
-redis_sentinel_docker_network_name: default
-redis_sentinel_announce_ip: 127.0.0.1
-redis_sentinel_announce_port: 26379
+redis_sentinel_docker_network_name: redis
+redis_sentinel_announce_ip: "{{ redis_sentinel_bind }}"
+redis_sentinel_announce_port: "{{ redis_sentinel_port }}"
 
 ## Sentinel options
 redis_sentinel_protected_mode: "yes"

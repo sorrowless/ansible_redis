@@ -2,12 +2,6 @@
 - name: Include OS-specific variables.
   include_vars: "{{ ansible_os_family | replace (' ', '') }}.yml"
 
-- name: Ensure Redis configuration dir exists.
-  file:
-    path: "{{ redis_conf_path | dirname }}"
-    state: directory
-    mode: 0755
-
 - include_tasks: redis-install.yml
   when: redis_standalone or redis_sentinel_standalone
 
