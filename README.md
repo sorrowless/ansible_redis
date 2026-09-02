@@ -104,6 +104,22 @@ For extra security, you can disable certain Redis commands (this is especially i
       - CONFIG
       - SHUTDOWN
 
+For run in docker:
+    redis_standalone: false
+    redis_docker: true
+    redis_sentinel_docker: true
+    redis_replica_announce_ip: "{{ ansible_ip }}"
+    redis_sentinel_announce_ip: "{{ ansible_ip }}"
+
+For run in swarm:
+    redis_standalone: false
+    redis_docker: true
+    redis_swarm: true
+    redis_sentinel_docker: true
+    redis_sentinel_swarm: true
+    redis_replica_announce_ip: "{{ ansible_ip }}"
+    redis_sentinel_announce_ip: "{{ ansible_ip }}"
+
 ## Dependencies
 
 None.

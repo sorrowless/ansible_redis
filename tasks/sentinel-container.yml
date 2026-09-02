@@ -1,6 +1,6 @@
 ---
 - name: Ensure Redis Sentinel is configured.
-  template:
+  ansible.builtin.template:
     src: sentinel.conf.j2
     dest: "{{ redis_conf_path | dirname }}/sentinel.conf"
     mode: "{{ redis_conf_mode }}"
@@ -9,6 +9,8 @@
   notify: restart sentinel container
 
 - name: Start sentinel container
+  when:
+    - not redis_sentinel_swarm
   community.docker.docker_compose_v2:
     state: present
     project_name: "{{ redis_sentinel_docker_project_name }}"
@@ -28,3 +30,27 @@
         default:
           external: true
           name: "{{ redis_sentinel_docker_network_name }}"
+
+- name: Deploy Redis stack
+  when:
+    - redis_swarm
+  run_once: true
+  community.docker.docker_stack:
+    state: present
+    name: "{{ redis_docker_project_name }}"
+    with_registry_auth: true
+    compose:
+      - services:
+          sentinel:
+            image: "{{ redis_sentinel_docker_image }}"
+            command: "redis-server /etc/redis/sentinel.conf --sentinel"
+            labels: "{{ sentinel_docker_labels }}"
+            ports: "{{ sentinel_swarm_ports }}"
+            volumes:
+              - "{{ redis_conf_path | dirname }}:/etc/redis/"
+            extra_hosts: "{{ sentinel_extra_hosts }}"
+            deploy: "{{ sentinel_swarm_deploy }}"
+        networks:
+          default:
+            external: true
+            name: "{{ redis_docker_network_name }}"

@@ -2,8 +2,10 @@
 # Global variables for separatly deployment redis and sentinel
 redis_standalone: true
 redis_docker: false
+redis_swarm: false
 redis_sentinel_standalone: false
 redis_sentinel_docker: false
+redis_sentinel_swarm: false
 
 # Redis docker related vars
 redis_docker_project_name: redis
@@ -79,12 +81,26 @@ redis_min_slaves_max_lag: 10
 redis_replica_announce_ip: "{{ redis_bind_interface }}"
 redis_replica_announce_port: "{{ redis_port }}"
 
+## redis swarm options
+redis_docker_labels: []
+redis_swarm_ports:
+  - target: 6379
+    published: "{{ redis_port }}"
+    protocol: tcp
+    mode: host
+redis_extra_hosts: []
+redis_swarm_deploy:
+  mode: global
+  placement:
+    constraints:
+      - node.labels.redis == true
+
 ## Additional config
 redis_config_additional: ""
 
 ## Docker related vars for sentinel
 redis_sentinel_docker_project_name: sentinel
-redis_sentinel_docker_image: redis
+redis_sentinel_docker_image: "{{ redis_docker_image }}"
 redis_sentinel_container_name: sentinel
 redis_sentinel_docker_network_name: redis
 redis_sentinel_announce_ip: "{{ redis_sentinel_bind }}"
@@ -112,3 +128,13 @@ redis_sentinel_monitors:
     notification_script: false
     client_reconfig_script: false
     rename_commands: []
+
+# sentinel swarm options
+sentinel_docker_labels: "{{ redis_docker_labels }}"
+sentinel_swarm_ports:
+  - target: 26379
+    published: "{{ redis_sentinel_port }}"
+    protocol: tcp
+    mode: host
+sentinel_extra_hosts: "{{ redis_extra_hosts }}"
+sentinel_swarm_deploy: "{{ redis_swarm_deploy }}"

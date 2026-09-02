@@ -1,15 +1,15 @@
 ---
 - name: Include OS-specific variables.
-  include_vars: "{{ ansible_os_family | replace (' ', '') }}.yml"
+  ansible.builtin.include_vars: "{{ ansible_facts['os_family'] | replace (' ', '') }}.yml"
 
-- include_tasks: redis-install.yml
+- ansible.builtin.include_tasks: redis-install.yml
   when: redis_standalone or redis_sentinel_standalone
 
-- include_tasks: redis-container.yml
+- ansible.builtin.include_tasks: redis-container.yml
   when: redis_docker
 
-- include_tasks: sentinel.yml
+- ansible.builtin.include_tasks: sentinel.yml
   when: redis_sentinel_standalone
 
-- include_tasks: sentinel-container.yml
+- ansible.builtin.include_tasks: sentinel-container.yml
   when: redis_sentinel_docker
