@@ -31,7 +31,7 @@
           external: true
           name: "{{ redis_sentinel_docker_network_name }}"
 
-- name: Deploy Redis stack
+- name: Deploy sentinel to redis stack
   when:
     - redis_swarm
   run_once: true
