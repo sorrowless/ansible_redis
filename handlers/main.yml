@@ -1,18 +1,20 @@
 ---
 - name: restart redis
-  service: "name={{ redis_daemon }} state=restarted"
+  ansible.builtin.service: "name={{ redis_daemon }} state=restarted"
 
 - name: restart sentinel
-  service: "name=sentinel state=restarted"
+  ansible.builtin.service: "name=sentinel state=restarted"
 
 - name: restart redis container
-  docker_container:
+  community.docker.docker_container:
     name: "{{ redis_container_name }}"
     state: started
     restart: yes
+  when: not redis_swarm
 
 - name: restart sentinel container
-  docker_container:
+  community.docker.docker_container:
     name: "{{ redis_sentinel_container_name }}"
     state: started
     restart: yes
+  when: not redis_sentinel_swarm

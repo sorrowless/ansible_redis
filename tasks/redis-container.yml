@@ -1,6 +1,6 @@
 ---
 - name: Ensure Redis configuration dir exists.
-  file:
+  ansible.builtin.file:
     path: "{{ redis_conf_path | dirname }}"
     state: directory
     mode: 0755
@@ -8,19 +8,21 @@
     group: 999
 
 - name: Ensure Redis data dir exists.
-  file:
+  ansible.builtin.file:
     path: "{{ redis_docker_data_path }}"
     state: directory
     mode: 0777
 
 - name: Ensure Redis is configured.
-  template:
+  ansible.builtin.template:
     src: redis.conf.j2
     dest: "{{ redis_conf_path }}/redis.conf"
     mode: "{{ redis_conf_mode }}"
   notify: restart redis container
 
 - name: Start redis container
+  when:
+    - not redis_swarm
   community.docker.docker_compose_v2:
     state: present
     project_name: "{{ redis_docker_project_name }}"
@@ -35,9 +37,73 @@
             - "{{ redis_bind_interface }}:{{ redis_port }}:6379"
           restart: always
           volumes:
-            - "{{ redis_conf_path }}:/etc/redis/"
+            - "{{ redis_conf_path }}:/etc/redis/:ro"
             - "{{ redis_docker_data_path }}:{{ redis_dbdir }}"
       networks:
         default:
           external: true
           name: "{{ redis_docker_network_name }}"
+
+- name: Deploy redis to docker swarm
+  when:
+    - redis_swarm
+  block:
+    - name: Ensure pip installation
+      ansible.builtin.package:
+        name: "python3-pip"
+        state: present
+
+    - name: Install newer version of pip itself
+      ansible.builtin.pip:
+        name: "pip"
+        state: latest
+        executable: pip3
+      when:
+        - ansible_facts['distribution'] | lower == "ubuntu"
+        - ansible_facts['distribution_major_version'] | int != 24
+
+    - name: Install jsondiff from pip
+      ansible.builtin.pip:
+        name: "jsondiff"
+        state: present
+        executable: pip3
+      when:
+        - ansible_facts['distribution'] | lower == "ubuntu"
+        - ansible_facts['distribution_major_version'] | int != 24
+
+    - name: Ensure jsondiff
+      ansible.builtin.package:
+        name: "python3-jsondiff"
+        state: present
+      when:
+        - ansible_facts['distribution'] | lower == "ubuntu"
+        - ansible_facts['distribution_major_version'] | int == 24
+
+    - name: Deploy Redis stack
+      run_once: true
+      community.docker.docker_stack:
+        state: present
+        name: "{{ redis_docker_project_name }}"
+        with_registry_auth: true
+        compose:
+          - services:
+              redis:
+                image: "{{ redis_docker_image }}"
+                command: "redis-server /etc/redis/redis.conf"
+                healthcheck:
+                  test: ["CMD", "redis-cli", "ping"]
+                  interval: 5s
+                  timeout: 3s
+                  retries: 3
+                  start_period: 10s
+                labels: "{{ redis_docker_labels }}"
+                ports: "{{ redis_swarm_ports }}"
+                volumes:
+                  - "{{ redis_conf_path }}:/etc/redis/:ro"
+                  - "{{ redis_docker_data_path }}:{{ redis_dbdir }}"
+                extra_hosts: "{{ redis_extra_hosts }}"
+                deploy: "{{ redis_swarm_deploy }}"
+            networks:
+              default:
+                external: true
+                name: "{{ redis_docker_network_name }}"
