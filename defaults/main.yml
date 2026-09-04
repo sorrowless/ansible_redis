@@ -91,6 +91,12 @@ redis_swarm_ports:
 redis_extra_hosts: []
 redis_swarm_deploy:
   mode: global
+  update_config:
+    parallelism: 1
+    delay: 5s
+    failure_action: rollback
+    monitor: 30s
+    order: stop-first
   placement:
     constraints:
       - node.labels.redis == true

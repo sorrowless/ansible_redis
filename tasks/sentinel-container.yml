@@ -44,6 +44,12 @@
           sentinel:
             image: "{{ redis_sentinel_docker_image }}"
             command: "redis-server /etc/redis/sentinel.conf --sentinel"
+            healthcheck:
+              test: ["CMD", "redis-cli", "-p", "26379", "ping"]
+              interval: 5s
+              timeout: 3s
+              retries: 3
+              start_period: 10s
             labels: "{{ sentinel_docker_labels }}"
             ports: "{{ sentinel_swarm_ports }}"
             volumes:

@@ -37,7 +37,7 @@
             - "{{ redis_bind_interface }}:{{ redis_port }}:6379"
           restart: always
           volumes:
-            - "{{ redis_conf_path }}:/etc/redis/"
+            - "{{ redis_conf_path }}:/etc/redis/:ro"
             - "{{ redis_docker_data_path }}:{{ redis_dbdir }}"
       networks:
         default:
@@ -90,10 +90,16 @@
               redis:
                 image: "{{ redis_docker_image }}"
                 command: "redis-server /etc/redis/redis.conf"
+                healthcheck:
+                  test: ["CMD", "redis-cli", "ping"]
+                  interval: 5s
+                  timeout: 3s
+                  retries: 3
+                  start_period: 10s
                 labels: "{{ redis_docker_labels }}"
                 ports: "{{ redis_swarm_ports }}"
                 volumes:
-                  - "{{ redis_conf_path }}:/etc/redis/"
+                  - "{{ redis_conf_path }}:/etc/redis/:ro"
                   - "{{ redis_docker_data_path }}:{{ redis_dbdir }}"
                 extra_hosts: "{{ redis_extra_hosts }}"
                 deploy: "{{ redis_swarm_deploy }}"
